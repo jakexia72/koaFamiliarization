@@ -11,21 +11,13 @@ app.context.userData = {
 
 //response
 app.use(ctx => {
-  //use is the main syntax used to add any functions with the server
-  //used to create functions etc, in this case, the function ctx.
 
-  //use state
-  //ctx.state.user = 'Jake';
-
-  //request object
-  let origin = ctx.request.origin //check documentation for request
-
-
-  //print hello world with date
-  //use `` special quotes for template strings
-  ctx.response.body = `Hello, ${ctx.userData.first} ${ctx.userData.last} on ${ctx.date}`;
-  //ctx.response.body = ctx.userData.first;
-  console.log(origin);
+  //this example shows error handling
+  if (ctx.userData){
+    return ctx.response.body = ctx.userData;
+  } else {
+    return ctx.throw(400, 'data required');
+  }
 })
 
 app.listen(PORT);
