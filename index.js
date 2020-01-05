@@ -2,22 +2,30 @@ const Koa = require('koa'); //require
 const app = new Koa(); //new koa instance (main object)
 const PORT = 3000;
 
-//add date method to context
-app.context.date = Date(); //add 'date' function to context
 app.context.userData = {
   'first' : 'Jake',
   'last' : 'Xia'
 }
 
-//response
-app.use(ctx => {
-
-  //this example shows error handling
-  if (ctx.userData){
-    return ctx.response.body = ctx.userData;
-  } else {
-    return ctx.throw(400, 'data required');
-  }
+//log
+app.use(async (ctx, next) => {
+  await next(); //goes to next function
+  const responseTime = ctx.response.get('X-Response-Time');
+  console.log(`${ctx.request.method} ${ctx.request.url} - ${responseTime}`)
 })
+
+app.use(async (ctx,next) => {
+  const start = Date.now();
+  await next(); //waits again
+  const milisecond = Date.now() - start;
+  ctx.set('X-Response-Time', `${milisecond}ms`)
+})
+
+//response
+app.use(async (ctx) => {
+   ctx.response.body = ctx.userData; //executes
+});
+
+
 
 app.listen(PORT);
